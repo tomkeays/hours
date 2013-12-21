@@ -36,18 +36,18 @@ $pass = "";
 $hName = "localhost"; 
 	
 // MySQL username and password
-$uName = ""; 
-$pWord = "";
+$uName = "root"; 
+$pWord = "root";
 
 // Database name
-$dbName = "";
+$dbName = "libapi";
 
 // Uncomment the debugger variable if you wish to see what's happening in gdata_connect.php
 // $debugger = "yes";
 
 // Make sure we can find the Zend library, if it's not in the includes folder
 // This path is not correct!!!
-set_include_path('/path/to/zend');
+// set_include_path('/path/to/zend');
 
 
 /////////////////////////////////////
@@ -57,12 +57,12 @@ set_include_path('/path/to/zend');
 
 function dbCall($uName, $pWord, $dbName){
 
-global $hName;
- 
-// make connection to database 
-MYSQL_CONNECT($hName, $uName, $pWord) OR DIE("<p>Unable to connect to database <strong>$hName</strong> with username=$uName and password=$pWord.</p>");
+	global $hName;
+	 
+	// make connection to database 
+	MYSQL_CONNECT($hName, $uName, $pWord) OR DIE("<p>Unable to connect to database <strong>$hName</strong> with username=$uName and password=$pWord.</p>");
 
-@mysql_select_db("$dbName") or die( "<p>Unable to select database <strong>$dbName</strong></p>"); 
+	@mysql_select_db("$dbName") or die( "<p>Unable to select database <strong>$dbName</strong></p>"); 
 
 }	
 ?>
