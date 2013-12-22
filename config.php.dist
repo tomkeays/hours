@@ -50,19 +50,24 @@ $dbName = "";
 // set_include_path('/path/to/zend');
 
 
-/////////////////////////////////////
-// Function to connect to MySQL
-// You do not need to edit this . . .
-/////////////////////////////////////
+////////////////////////////////////////////
+// Function to connect to MySQL using PDO //
+// You do not need to edit this . . .     //
+////////////////////////////////////////////
 
 function dbCall($uName, $pWord, $dbName){
 
 	global $hName;
 	 
-	// make connection to database 
-	MYSQL_CONNECT($hName, $uName, $pWord) OR DIE("<p>Unable to connect to database <strong>$hName</strong> with username=$uName and password=$pWord.</p>");
-
-	@mysql_select_db("$dbName") or die( "<p>Unable to select database <strong>$dbName</strong></p>"); 
-
-}	
-?>
+	try
+	{
+	  $pdo = new PDO('mysql:host=$hName;dbname=$dbName', '$uName', '$pWord');
+	  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	  $pdo->exec('SET NAMES "utf8"');
+	}
+	catch (PDOException $e)
+	{
+	  $error = 'Unable to connect to the database server.';
+	  include 'error.html.php';
+	  exit();
+	}
