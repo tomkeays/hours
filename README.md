@@ -14,4 +14,4 @@ I want to change.
 1. Refactor database code to use PDO approach.
 2. Make the database queries more secure by using prepared stateents and placeholders. 
 3. Create a way to handle instances when the library is open 24 hours. The may be a corresponding best practice for formating entries in the underlying Google Calendar. 
-4. Use and API approach for generating the calendar on the website. 
+4. Use an API approach for generating the calendar on the website. 
