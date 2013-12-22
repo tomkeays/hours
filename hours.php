@@ -34,6 +34,8 @@ require_once("config.php");
 		$chm = $_GET["chm"];
 	}
 
+putenv("TZ=US/Eastern");
+
 $d= date("d");     // Finds today's date
 $y= date("Y");     // Finds today's year
 
