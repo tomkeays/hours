@@ -51,25 +51,21 @@ $dbName = "";
 
 
 ////////////////////////////////////////////
-// Function to connect to MySQL using PDO //
-// You do not need to edit this . . .     //
+// Create PDO object to connect to MySQL 
+// You do not need to edit this . . .     
 ////////////////////////////////////////////
 
-function dbCall($uName, $pWord, $dbName){
-
-	global $hName;
-	 
-	try
-	{
-	  $pdo = new PDO("mysql:host=$hName;dbname=$dbName", "$uName", "$pWord");
-	  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	  $pdo->exec('SET NAMES "utf8"');
-	}
-	catch (PDOException $e)
-	{
-	  $error = 'Unable to connect to the database server.';
-	  include 'error.html.php';
-	  exit();
-	}
-
+global $hName;
+ 
+try
+{
+  $pdo = new PDO("mysql:host=$hName;dbname=$dbName", "$uName", "$pWord");
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo->exec('SET NAMES "utf8"');
+}
+catch (PDOException $e)
+{
+  $error = 'Unable to connect to the database server.';
+  include 'error.html.php';
+  exit();
 }
