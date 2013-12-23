@@ -61,7 +61,7 @@ function dbCall($uName, $pWord, $dbName){
 	 
 	try
 	{
-	  $pdo = new PDO('mysql:host=$hName;dbname=$dbName', '$uName', '$pWord');
+	  $pdo = new PDO("mysql:host=$hName;dbname=$dbName", "$uName", "$pWord");
 	  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	  $pdo->exec('SET NAMES "utf8"');
 	}
@@ -71,3 +71,5 @@ function dbCall($uName, $pWord, $dbName){
 	  include 'error.html.php';
 	  exit();
 	}
+
+}
