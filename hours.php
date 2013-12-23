@@ -28,58 +28,62 @@ require_once("config.php");
 // script modified from http://www.plus2net.com/php_tutorial/php_calendar.php
 ////////////////////////////////
 
-	// Make sure the user input is numeric and not nasty
-	if (is_numeric($_GET["prm"]) && is_numeric($_GET["chm"])) {
-		$prm = $_GET["prm"];
-		$chm = $_GET["chm"];
-	}
+// Make sure the user input is numeric and not nasty
+if (is_numeric($_GET["prm"]) && is_numeric($_GET["chm"])) {
+	$prm = $_GET["prm"];
+	$chm = $_GET["chm"];
+}
 
 putenv("TZ=US/Eastern");
 
-$d= date("d");     // Finds today's date
-$y= date("Y");     // Finds today's year
+$d = date("d");     // Finds today's date
+$y = date("Y");     // Finds today's year
 
-	if(isset($prm) and $prm > 0){
-		$m=$prm+$chm;
-	}else{
-		$m= date("m");
-	}
+if(isset($prm) and $prm > 0) {
+	$m = $prm+$chm;
+} else {
+	$m = date("m");
+}
 
 $no_of_days = date('t',mktime(0,0,0,$m,1,$y)); // This is to calculate number of days in a month
 
-$mn=date('F',mktime(0,0,0,$m,1,$y)); // Month is calculated to display at the top of the calendar
-$mql = date('m',mktime(0,0,0,$m,1,$y));
-$yn=date('Y',mktime(0,0,0,$m,1,$y)); // Year is calculated to display at the top of the calendar
-$j= date('w',mktime(0,0,0,$m,1,$y)); // This will calculate the week day of the first day of the month
+$mn  = date('F',mktime(0,0,0,$m,1,$y)); // Month is calculated to display at the top of the calendar
+$mql = date('m',mktime(0,0,0,$m,1,$y)); // Month is zero padding integer
+$yn  = date('Y',mktime(0,0,0,$m,1,$y)); // Year is calculated to display at the top of the calendar
+$j   = date('w',mktime(0,0,0,$m,1,$y)); // This will calculate the week day of the first day of the month
 
-	for($k=1; $k<=$j; $k++){ // Adjustment of date starting
-	$adj .="<td>&nbsp;</td>";
-	}
+for($k=1; $k<=$j; $k++) { // Adjustment of date starting
+	$adj .= "<td>&nbsp;</td>";
+}
 
 //////////////////////////////////
 
-// Connect to database (function in config.php)
+// Connect to database (PDO object in config.php)
 
-dbCall($uName, $pWord, $dbName);
+try 
+{
+	$q = "SELECT opening, closing, is_closed, ymd
+			FROM `libhours`
+			WHERE ymd LIKE '$yn-$mql-%'
+			ORDER BY ymd"; 
+	$result = $pdo->query($q);
+}
+catch (PDOException $e)
+{
+	$error = 'Error selecting hours from libhours table: ' . $e->getMessage();
+	include 'error.html.php';
+	exit();
+}
 
-$q = "SELECT opening, closing, is_closed, ymd
-FROM `libhours`
-WHERE ymd LIKE '$yn-$mql-%'
-ORDER BY ymd";
-
-$r = MYSQL_QUERY($q);
-
-	while($myrow =  mysql_fetch_array($r))
-	{   
-	
+while ($myrow = $result->fetch())
+{
 	list($year, $month, $day) = split("-", $myrow[3]);
 	
 	// Get rid of the leading 0 so that things will match up below
 	$day = preg_replace("/^0/", "", $day);
 	
 	$date_data[$day] = array ($myrow[0], $myrow[1], $myrow[2], $myrow[3]);
-	
-	}
+}
 
 $calendar = "<div align=\"center\">
 <table cellspacing=\"1\" cellpadding=\"3\" align=\"center\" width=\"\" border=\"0\" id=\"hours\" class=\"striped_data\">\n
@@ -152,52 +156,4 @@ print_r($date_data);
 print "</pre>"; 
  */
 
-
-?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Library Hours</title>
-<style type="text/css" media="all">
-#hours {
-position:relative;
-background-color: #fff;
-border: 1px solid #e0e0e0;
-font-family: Verdana, Arial, sans-serif;
-font-size: 13px;
-}	
-
-.hoursbox {
-background-color: #CFDAE6;
-}	
-
-.hours_header{
-background-color: #fff;
-text-align:center;
-color: #000;
-font-size: larger;
-}	
-
-.hours_subheader{
-background-color: #8798AC;
-text-align:center;
-color: #fff;
-}	
-
-.hours_today {
-background-color: #333;
-color: #fff;
-}
-</style>
-</head>
-<body>
-
-<?php print $calendar; ?>
-<br />
-
-</body>
-</html>
-
-
+include "calendar.html.php";
