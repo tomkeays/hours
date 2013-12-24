@@ -69,24 +69,22 @@ $sql = substr($sql, 0, -2);
 $intro = "INSERT INTO libhours (ymd, dow, opening, closing, is_closed)
 VALUES ";
 
-dbCall($uName, $pWord, $dbName);
-
 $query = $intro.$sql;
 
 $delete_query = "delete from libhours where ymd >= '$today'";
 
-$r = MYSQL_QUERY($delete_query);
+$r = $pdo->exec($delete_query);
 
 print "<p>Attempting Delete Query: <span style=\"background-color: #e0e0e0;\">$delete_query</span><p>";
 
-	if ($r) { print "<p>Result of Delete: <strong>Success</strong></p>";} else { print "<p>Result of Delete: <strong>Failure</strong></p>";}
+if ($r) { print "<p>Result of Delete: <strong>Success</strong></p>";} else { print "<p>Result of Delete: <strong>Failure</strong></p>";}
 
-$r2 = MYSQL_QUERY($query);
+$r2 = $pdo->exec($query);
 
 // Print out the SQL, for everyone's edification
 print "<p>Attempting Insert Query:  <span style=\"background-color: yellow\">$query</span></p>";
 
-	if ($r2) { print "<p>Result of Insert: <strong>Success</strong></p>";} else { print "<p>Result of Insert: <strong>Failure</strong>.  Are you sure you have data in your Google Calendar to be extracted?</p>" ;}
+if ($r2) { print "<p>Result of Insert: <strong>Success</strong></p>";} else { print "<p>Result of Insert: <strong>Failure</strong>.  Are you sure you have data in your Google Calendar to be extracted?</p>" ;}
 
 ///////////////
 /* Functions */
@@ -162,10 +160,10 @@ function outputCalendarByDateRange($client, $startDate, $endDate)
 			// (and then add a field to the database to store the info + to the sql)
 			// $event_content = $date_item[6];
 	
-				// Look for the word "Closed" in the event title field (case-insensitive) to determine if 
-				// the library is closed that day
-				
-				if (preg_match("/closed/i", $event_title)) {$closed = 1; } else {$closed = 0;}
+			// Look for the word "Closed" in the event title field (case-insensitive) to determine if 
+			// the library is closed that day
+			
+			if (preg_match("/closed/i", $event_title)) {$closed = 1; } else {$closed = 0;}
 				
 			$newStart = miltoampm($startHr, $startMin);
 			$newEnd = miltoampm($endHr, $endMin);
