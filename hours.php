@@ -64,9 +64,13 @@ try
 {
 	$q = "SELECT opening, closing, is_closed, ymd
 			FROM `libhours`
-			WHERE ymd LIKE '$yn-$mql-%'
-			ORDER BY ymd"; 
-	$result = $pdo->query($q);
+			WHERE ymd LIKE :prepared_date
+			ORDER BY ymd"; 	
+	
+	$placeholders = array();
+	$placeholders[':prepared_date'] = $yn . '-' . $mql . '-%';
+	$s = $pdo->prepare($q);
+	$s->execute($placeholders);
 }
 catch (PDOException $e)
 {
@@ -75,7 +79,7 @@ catch (PDOException $e)
 	exit();
 }
 
-while ($myrow = $result->fetch())
+foreach ($s as $myrow)
 {
 	list($year, $month, $day) = split("-", $myrow[3]);
 	
