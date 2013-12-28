@@ -52,10 +52,6 @@ $mql = date('m',mktime(0,0,0,$m,1,$y)); // Month is zero padding integer
 $yn  = date('Y',mktime(0,0,0,$m,1,$y)); // Year is calculated to display at the top of the calendar
 $j   = date('w',mktime(0,0,0,$m,1,$y)); // This will calculate the week day of the first day of the month
 
-for($k=1; $k<=$j; $k++) { // Adjustment of date starting
-	$adj .= "<td>&nbsp;</td>";
-}
-
 //////////////////////////////////
 
 // Connect to database (PDO object in config.php)
@@ -95,64 +91,66 @@ $calendar = "<div align=\"center\">
 	<br /><br />\n
 	</td>\n
 </tr>\n
-<tr class=\"hours_subheader\">\n
-	<td size=\"14%\">Sunday</td>\n
-	<td size=\"14%\">Monday</td>\n
-	<td size=\"14%\">Tuesday</td>\n
-	<td size=\"14%\">Wednesday</td>\n
-	<td size=\"14%\">Thursday</td>\n
-	<td size=\"14%\">Friday</td>\n
-	<td size=\"14%\">Saturday</td>\n
-</tr>\n
+<tr class=\"hours_subheader\">
+	<td size=\"14%\">Sunday</td>
+	<td size=\"14%\">Monday</td>
+	<td size=\"14%\">Tuesday</td>
+	<td size=\"14%\">Wednesday</td>
+	<td size=\"14%\">Thursday</td>
+	<td size=\"14%\">Friday</td>
+	<td size=\"14%\">Saturday</td>
+</tr>
 <tr>\n";
 
 ////// End of the top line showing name of the days of the week//////////
 
+////// Adjustment of date starting ///////
+for($k=1; $k<=$j; $k++) { 
+	$calendar .= "\t<td>&nbsp;</td>\n";
+}
+
 //////// Starting of the days//////////
 for($i=1;$i<=$no_of_days;$i++){
-$calendar .= $adj . "<td valign=\"top\" class=\"hoursbox";
+	$calendar .= "\t<td valign=\"top\" class=\"hoursbox";
 
 	// Add the coloured box for today
 	if ($i == $d && $m == date("m")) {
-	$calendar .= " hours_today";
+		$calendar .= " hours_today";
 	} 
 	
-$calendar.= "\">
-<div style=\"color: #efefef; font-size: 18pt; padding: 5px;\">$i</div>"; // This will display the date inside the calendar cell
+	$calendar.= "\">
+\t\t<div style=\"color: #efefef; font-size: 18pt; padding: 5px;\">$i</div>\n"; // This will display the date inside the calendar cell
 
 	if ($date_data[$i][2] == 1) {
 	// Enter the "Closed" Text
-	$calendar .= "Closed";
+		$calendar .= "\t\tClosed";
 	} elseif ($date_data[$i][0] == "") {
 	// No data for this day; leave blank
-	$calendar .= "<br /><br />";
+		$calendar .= "\t\t<br /><br />";
 	} else {
-
-	$listing = str_replace(" am", "<span style=\"font-size: 9px;\">am</span>", $date_data[$i][0]); 
-	$listing = str_replace(" pm", "<span style=\"font-size: 9px;\">pm</span>", $listing); 
-	
-	$listing2 = str_replace(" am", "<span style=\"font-size: 9px;\">am</span>", $date_data[$i][1]); 
-	$listing2 = str_replace(" pm", "<span style=\"font-size: 9px;\">pm</span>", $listing2); 
+		$listing = str_replace(" am", "<span style=\"font-size: 9px;\">am</span>", $date_data[$i][0]); 
+		$listing = str_replace(" pm", "<span style=\"font-size: 9px;\">pm</span>", $listing); 
+		
+		$listing2 = str_replace(" am", "<span style=\"font-size: 9px;\">am</span>", $date_data[$i][1]); 
+		$listing2 = str_replace(" pm", "<span style=\"font-size: 9px;\">pm</span>", $listing2); 
 	
 		// Make sure there's a listing for this day (actually, just a closing hour)
 		if ($listing2 != "") {
-		$calendar.= $listing . " - " . $listing2; // Library's open
-		}
-	
+			$calendar.= "\t\t" . $listing . " - " . $listing2; // Library's open
+		}	
 	}
 	
-$calendar.= "</td>\n";
+	$calendar.= "\n\t</td>\n";
 
-$adj="";
-$j++;
-	if($j==7){$calendar.= "</tr>\n<tr>";
-$j=0;}
+	$j++;
+	if($j==7){
+		$calendar.= "</tr>\n<tr>\n";
+		$j=0;
+	}
 
 }
 
-$calendar.= "</tr>\n
-</table>\n
-</div>";
+$calendar .= "</tr>\n</table>\n</div>\n";
 
 // Uncomment the lines below to see an array of the values returned from the DB
 /* print "<pre>";
